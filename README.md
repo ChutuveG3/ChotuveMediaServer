@@ -1,7 +1,14 @@
 # ChotuveMediaServer
 
-## Instalación de dependencias
-`$ pip install -r requirements.txt`
+## Levantar el servidor con Docker  
+Dependencias: Docker.  
+
+### Bulidear la imagen:  
+` docker build -t chotuve-media-server .`
+### Levantamos el contenedor
+`docker run -d -p 5000:7654 -e PORT=7654 -e MONGO_URI=<mongo_uri> -e DB_NAME=<db_name> chotuve-media-server:latest `  
+
+Podremos acceder desde `localhost:5000`.
 
 ## Correr tests
 Correr el siguiente comando:  
