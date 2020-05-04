@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger()
 
 # Config. database and set default.
-client = MongoClient(os.getenv('MONGO_URL', 'mongodb://localhost:27017/db'))
+client = MongoClient(os.getenv('MONGO_URI', 'mongodb://localhost:27017/db'))
 db = client.get_database(os.getenv('DB_NAME', 'test'))
 logger.info(f'Connected to DB: {db.name}')
 
