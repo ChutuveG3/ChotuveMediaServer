@@ -1,8 +1,40 @@
+sudo: required
+
 language: python
 python:
-  - "3.8"
+  - 3.8
+services:
+  - docker
+# TODO: levantar docker compose con mongo para las pruebas.
+before_install:
+  - wget -qO- https://toolbelt.heroku.com/install.sh | sh
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+  - docker build -t media-server .
+  - docker run -d --name app -p 5000:7654 -e PORT=7654 media-server:latest
+  - docker ps -a
 install:
-  - pip install -r requirements.txt
-# command to run tests
+  - echo "do nothing"
 script:
-  - nose2
+  # TODO: agregar coverage.
+  - docker exec app nose2
+after_script:
+  - docker rm -f app
+deploy:
+  provider: script
+  # TODO: refactor en scrip de bash.
+  script:
+    docker build -t media-server .;
+    docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
+    docker push registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
+    heroku container:release web --app $HEROKU_APP_NAME_PROD;
+  on:
+    branch: master
+   script:
+    docker build -t media-server .;
+    docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
+    docker push registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
+    heroku container:release web --app $HEROKU_APP_NAME_STAG;
+  on:
+    branch: develop
+
