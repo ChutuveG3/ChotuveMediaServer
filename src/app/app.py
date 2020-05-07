@@ -1,5 +1,6 @@
 import logging
 import os
+from version import Version
 from flask import Flask
 from pymongo import MongoClient
 
