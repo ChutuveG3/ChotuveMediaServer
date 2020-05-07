@@ -21,20 +21,21 @@ script:
 after_script:
   - docker rm -f app
 deploy:
-  provider: script
+  - provider: script
   # TODO: refactor en scrip de bash.
-  script:
-    docker build -t media-server .;
-    docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
-    docker push registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
-    heroku container:release web --app $HEROKU_APP_NAME_PROD;
-  on:
-    branch: master
-   script:
-    docker build -t media-server .;
-    docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
-    docker push registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
-    heroku container:release web --app $HEROKU_APP_NAME_STAG;
-  on:
-    branch: develop
+    script:
+      docker build -t media-server .;
+      docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
+      docker push registry.heroku.com/$HEROKU_APP_NAME_PROD/web;
+      heroku container:release web --app $HEROKU_APP_NAME_PROD;
+    on:
+      branch: master
+  - provider: script
+    script:
+      docker build -t media-server .;
+      docker tag media-server registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
+      docker push registry.heroku.com/$HEROKU_APP_NAME_STAG/web;
+      heroku container:release web --app $HEROKU_APP_NAME_STAG;
+    on:
+      branch: develop
 
