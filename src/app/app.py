@@ -1,6 +1,6 @@
-import os
 import logging
-from flask import Flask, escape, request, jsonify
+import os
+from flask import Flask
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -21,7 +21,7 @@ logger.info(f'Connected to DB: {db.name}')
 @app.route('/', methods=['GET'])
 def home():
     logger.info('Hello world')
-    return {'example': 'hello world'}
+    return {'version': f'{Version.get()}'}
 
 
 if __name__ == '__main__':
