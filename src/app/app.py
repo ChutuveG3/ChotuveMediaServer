@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from pymongo import MongoClient
 from flask_restful import Api
-from src.app.controller.home import Home
+from src.app.resources.home import Home
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
