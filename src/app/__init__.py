@@ -3,7 +3,8 @@ import os
 from flask import Flask
 from pymongo import MongoClient
 from flask_restful import Api
-from src.app.resources.home import Home
+
+from .resources import Home
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -21,6 +22,3 @@ db = client.get_database(os.getenv('DB_NAME', 'test'))
 logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
