@@ -1,6 +1,8 @@
 import logging
 import os
+
 from flask import Flask
+from mongoengine import ValidationError
 from pymongo import MongoClient
 from flask_restful import Api
 
@@ -25,3 +27,8 @@ logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
+
+
+@app.errorhandler(ValidationError)
+def handle_bad_request(e):
+    return {'errors': e.to_dict()}, 400
