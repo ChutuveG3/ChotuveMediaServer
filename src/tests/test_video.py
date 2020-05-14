@@ -3,6 +3,7 @@ import mock
 
 from app import app
 from app.models.video import VideoModel
+from mongoengine.errors import ValidationError
 
 video_data = {
     'file_name': 'file_name_test',
@@ -14,7 +15,11 @@ video_success_body = {
     'file_name': 'file_name_test',
     'file_size': 1024,
     'download_url': 'http//url.com',
-    'datetime': '2020-05-19T12:00:01'
+}
+
+video_error_body = {
+    'file_name': 'file_name_test',
+    'download_url': 'http//url.com',
 }
 
 
@@ -22,6 +27,10 @@ class TestVideoModel(unittest.TestCase):
     def test_to_default_datetime(self):
         video = VideoModel(**video_data)
         self.assertIsNotNone(video.datetime)
+
+    def test_raise_validation_error_on_create(self):
+        with self.assertRaises(ValidationError) as context:
+            VideoModel(**video_error_body)
 
 
 class TestVideoController(unittest.TestCase):

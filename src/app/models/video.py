@@ -8,7 +8,11 @@ def _not_empty(val):
 
 
 class VideoModel(Document):
-    file_name = StringField(validation=_not_empty)
-    file_size = IntField(validation=_not_empty, min_value=0)
-    download_url = StringField(validation=_not_empty)
-    datetime = DateTimeField(validation=_not_empty, default=datetime.datetime.utcnow)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.validate()
+
+    file_name = StringField(validation=_not_empty, required=True)
+    file_size = IntField(validation=_not_empty, required=True,  min_value=0)
+    download_url = StringField(validation=_not_empty, required=True)
+    datetime = DateTimeField(default=datetime.datetime.utcnow)
