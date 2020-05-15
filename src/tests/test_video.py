@@ -8,6 +8,7 @@ from mongoengine.errors import ValidationError
 video_error_body = {
     'file_name': 'file_name_test',
     'download_url': 'http//url.com',
+    'datetime': '2020-05-19T12:00:01'
 }
 
 
@@ -53,6 +54,13 @@ class TestVideoController(unittest.TestCase):
         response = self.app.post('/videos', json=video_error_body)
 
         self.assertDictEqual(response.json, {'errors': {'file_size': 'Field is required'}})
+        self.assertEqual(response.status_code, 400)
+
+    def test_date_validation_error(self):
+        video_invalid_datetime = self.video_success_body.copy()
+        video_invalid_datetime['datetime'] = 'invalid_datetime_format'
+
+        response = self.app.post('/videos', json=video_invalid_datetime)
         self.assertEqual(response.status_code, 400)
 
 
