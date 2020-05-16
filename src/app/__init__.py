@@ -2,7 +2,6 @@ import logging
 import os
 
 from flask import Flask
-from mongoengine import ValidationError
 from pymongo import MongoClient
 from flask_restful import Api
 from . import settings

@@ -30,4 +30,4 @@ class Video(Resource):
         except ValidationError as e:
             raise InvalidParamsException(e.to_dict())
 
-        return Response("{}", status=201, mimetype='application/json')
+        return {'id': video._id}, 201

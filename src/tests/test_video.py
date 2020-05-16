@@ -48,7 +48,7 @@ class TestVideoController(unittest.TestCase):
         response = self.app.post('/videos', json=self.video_success_body)
 
         self.assertEqual(mock_save.call_count, 1)
-        self.assertEqual(response.json, {})
+        self.assertTrue('id' in response.json)
         self.assertEqual(response.status_code, 201)
 
     def test_validation_error_handle(self):
