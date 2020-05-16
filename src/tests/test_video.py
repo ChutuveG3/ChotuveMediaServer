@@ -4,6 +4,7 @@ import mock
 from app import app
 from app.models.video import VideoModel
 from mongoengine.errors import ValidationError
+from app.exceptions.invalid_params_exception import InvalidParamsException
 
 video_error_body = {
     'file_name': 'file_name_test',
@@ -59,8 +60,8 @@ class TestVideoController(unittest.TestCase):
     def test_date_validation_error(self):
         video_invalid_datetime = self.video_success_body.copy()
         video_invalid_datetime['datetime'] = 'invalid_datetime_format'
-
         response = self.app.post('/videos', json=video_invalid_datetime)
+
         self.assertEqual(response.status_code, 400)
 
 

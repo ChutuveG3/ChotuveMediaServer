@@ -5,6 +5,7 @@ from mongoengine import ValidationError
 
 from ..models import VideoModel
 from ..repositories import *
+from ..exceptions import InvalidParamsException
 
 
 class Video(Resource):
@@ -25,6 +26,8 @@ class Video(Resource):
                                )
             VideoRepository().save(video)
         except (ValueError, TypeError) as e:
-            raise ValidationError
+            raise InvalidParamsException(str(e))
+        except ValidationError as e:
+            raise InvalidParamsException(e.to_dict())
 
         return Response("{}", status=201, mimetype='application/json')

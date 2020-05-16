@@ -9,6 +9,7 @@ from . import settings
 
 from .resources import Home
 from .resources import Video
+from .exceptions import InvalidParamsException
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -29,6 +30,6 @@ API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
 
 
-@app.errorhandler(ValidationError)
+@app.errorhandler(InvalidParamsException)
 def handle_bad_request(e):
-    return {'errors': e.to_dict()}, 400
+    return {'errors': e.message}, 400

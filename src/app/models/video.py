@@ -1,6 +1,5 @@
-from mongoengine import *
 import datetime
-
+from mongoengine import *
 
 def _not_empty(val):
     if not val:
