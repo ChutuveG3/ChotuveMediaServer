@@ -4,6 +4,8 @@ import os
 from flask import Flask
 from pymongo import MongoClient
 from flask_restful import Api
+from pymongo.errors import PyMongoError
+
 from . import settings
 
 from .resources import Home
@@ -32,3 +34,8 @@ API.add_resource(Video, '/videos')
 @app.errorhandler(InvalidParamsException)
 def handle_bad_request(e):
     return {'errors': e.message}, 400
+
+
+@app.errorhandler(PyMongoError)
+def handle_bad_request(e):
+    return {'errors': str(e)}, 500

@@ -4,7 +4,7 @@ import mock
 from app import app
 from app.models.video import VideoModel
 from mongoengine.errors import ValidationError
-from app.exceptions.invalid_params_exception import InvalidParamsException
+from pymongo.errors import DuplicateKeyError
 
 video_error_body = {
     'file_name': 'file_name_test',
@@ -63,6 +63,14 @@ class TestVideoController(unittest.TestCase):
         response = self.app.post('/videos', json=video_invalid_datetime)
 
         self.assertEqual(response.status_code, 400)
+
+    @mock.patch('app.repositories.video_repository.VideoRepository.save')
+    def test_handle_duplicate_key_error(self, mock_save):
+        mock_save.side_effect = DuplicateKeyError('test')
+        response = self.app.post('/videos', json=self.video_success_body)
+
+        self.assertEqual(mock_save.call_count, 1)
+        self.assertEqual(response.status_code, 500)
 
 
 if __name__ == '__main__':
