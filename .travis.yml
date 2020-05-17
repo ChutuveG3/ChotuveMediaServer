@@ -16,8 +16,9 @@ before_install:
 install:
   - echo "do nothing"
 script:
-  # TODO: agregar coverage.
-  - docker exec app nose2
+  - docker exec app coverage run -m nose2 -v && coverage report -m
+after_success:
+  - docker exec app coveralls
 after_script:
   - docker rm -f app
 deploy:

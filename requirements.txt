@@ -9,3 +9,5 @@ flask-restful==0.3.8
 mongoengine==0.20.0
 mock==4.0.2
 python-dotenv==0.13.0
+coverage==5.1
+coveralls==2.0.0
