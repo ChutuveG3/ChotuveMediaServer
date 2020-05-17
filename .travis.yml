@@ -11,14 +11,14 @@ before_install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
   - docker build -t media-server .
-  - docker run -d --name app -p 5000:7654 -e PORT=7654 media-server:latest
+  - docker run -d --name app -p 5000:7654 -e PORT=7654 -e COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN media-server
   - docker ps -a
 install:
   - echo "do nothing"
 script:
   - docker exec app sh -c "coverage run -m nose2 -v && coverage report -m"
 after_success:
-  - docker exec app coveralls
+  - docker exec app sh -c "coveralls"
 after_script:
   - docker rm -f app
 deploy:
