@@ -16,7 +16,7 @@ before_install:
 install:
   - echo "do nothing"
 script:
-  - docker exec app coverage run -m nose2 -v && coverage report -m
+  - docker exec app sh -c "coverage run -m nose2 -v && coverage report -m"
 after_success:
   - docker exec app coveralls
 after_script:
