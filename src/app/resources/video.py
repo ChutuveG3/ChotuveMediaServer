@@ -9,6 +9,8 @@ from ..exceptions import InvalidParamsException
 
 
 class Video(Resource):
+    LIMIT_PARAM = 'limit'
+    LIMIT_DEFAULT = 0
     ID_KEY = 'id'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
@@ -34,7 +36,10 @@ class Video(Resource):
         return {'id': video._id}, 201
 
     def get(self):
-        limit = request.args.get('limit', 0, int)
+        try:
+            limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
+        except ValueError as e:
+            raise InvalidParamsException(str(e))
         result = VideoRepository().find_all(limit)
 
         return [self.__map_video(video) for video in result], 200

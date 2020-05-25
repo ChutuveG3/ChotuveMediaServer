@@ -60,6 +60,11 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_find.call_count, 1)
         self.assertEqual(response.status_code, 200)
 
+    def test_get_all_videos_with_invalid_limit(self):
+        response = self.app.get('/videos?limit=not_integer')
+
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()
