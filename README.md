@@ -1,3 +1,5 @@
+[![Build Status](https://www.travis-ci.org/ChutuveG3/ChotuveMediaServer.svg?branch=master)](https://www.travis-ci.org/ChutuveG3/ChotuveMediaServer)
+
 # ChotuveMediaServer
 
 ## Levantar el servidor con Docker  
