@@ -43,7 +43,7 @@ class Video(Resource):
             offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:
             raise InvalidParamsException(str(e))
-        result = VideoRepository().find_all(limit, offset)
+        result = VideoRepository().find_by_username(limit=limit, offset=offset)
         videos = [self.map_video(video) for video in result]
 
         return videos, 200, {'total': len(videos)}

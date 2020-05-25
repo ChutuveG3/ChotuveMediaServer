@@ -53,7 +53,7 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_save.call_count, 1)
         self.assertEqual(response.status_code, 500)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_all')
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_username')
     def test_get_all_videos_success(self, mock_find):
         response = self.app.get('/videos')
 
