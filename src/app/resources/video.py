@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_restful import Resource
-from flask import request, Response
+from flask import request
 from mongoengine import ValidationError
 
 from ..models import VideoModel
@@ -35,7 +35,7 @@ class Video(Resource):
         except ValidationError as e:
             raise InvalidParamsException(e.to_dict())
 
-        return {'id': video._id}, 201
+        return {self.ID_KEY: video._id}, 201
 
     def get(self):
         try:
@@ -44,8 +44,9 @@ class Video(Resource):
         except ValueError as e:
             raise InvalidParamsException(str(e))
         result = VideoRepository().find_all(limit, offset)
+        videos = [self.__map_video(video) for video in result]
 
-        return [self.__map_video(video) for video in result], 200
+        return videos, 200, {'total': len(videos)}
 
     def __map_video(self, video):
         return {self.ID_KEY: video._id,
