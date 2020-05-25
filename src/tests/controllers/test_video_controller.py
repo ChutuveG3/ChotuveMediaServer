@@ -71,6 +71,14 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_username')
+    def test_get_videos_by_username_success(self, mock_find):
+        response = self.app.get('/videos/juan')
+
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('total' in response.headers)
+
 
 if __name__ == '__main__':
     unittest.main()

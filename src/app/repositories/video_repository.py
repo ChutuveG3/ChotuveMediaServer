@@ -24,7 +24,13 @@ class VideoRepository(object):
         equivalent to setting no offset.
         :return: list of Videos. [] on empty result.
         '''
-        result = self.video_collection.find().limit(limit).skip(offset)
+        result = self.video_collection.find({}, limit=limit, skip=offset)
+
+        return [self.__load(data) for data in result]
+
+    def find_by_username(self, username, limit=0, offset=0):
+        query = {'username': username}
+        result = self.video_collection.find(query, limit=limit, skip=offset)
 
         return [self.__load(data) for data in result]
 
