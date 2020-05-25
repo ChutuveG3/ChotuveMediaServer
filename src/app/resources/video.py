@@ -9,6 +9,7 @@ from ..exceptions import InvalidParamsException
 
 
 class Video(Resource):
+    ID_KEY = 'id'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
     DOWNLOAD_URL_KEY = 'download_url'
@@ -31,3 +32,15 @@ class Video(Resource):
             raise InvalidParamsException(e.to_dict())
 
         return {'id': video._id}, 201
+
+    def get(self):
+        limit = request.args.get('limit', 0, int)
+        result = VideoRepository().find_all(limit)
+
+        return [self.__map_video(video) for video in result], 200
+
+    def __map_video(self, video):
+        return {self.ID_KEY: video._id,
+                self.SIZE_KEY: video.file_size,
+                self.DOWNLOAD_URL_KEY: video.download_url,
+                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}
