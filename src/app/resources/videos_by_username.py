@@ -14,12 +14,6 @@ class VideosByUsername(Resource):
         except ValueError as e:
             raise InvalidParamsException(str(e))
         result = VideoRepository().find_by_username(username, limit, offset)
-        videos = [self.__map_video(video) for video in result]
+        videos = [Video().map_video(video) for video in result]
 
         return videos, 200, {'total': len(videos)}
-
-    def __map_video(self, video):
-        return {Video.ID_KEY: video._id,
-                Video.SIZE_KEY: video.file_size,
-                Video.DOWNLOAD_URL_KEY: video.download_url,
-                Video.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}
