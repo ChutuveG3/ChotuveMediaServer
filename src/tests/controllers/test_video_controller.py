@@ -2,37 +2,18 @@ import unittest
 
 import mock
 from app import app
-from app.models.video import VideoModel
-from mongoengine.errors import ValidationError
 from pymongo.errors import DuplicateKeyError
-
-video_error_body = {
-    'file_name': 'file_name_test',
-    'download_url': 'http//url.com',
-    'datetime': '2020-05-19T12:00:01'
-}
-
-
-class TestVideoModel(unittest.TestCase):
-    video_data = {
-        'file_name': 'file_name_test',
-        'file_size': '1024',
-        'download_url': 'http//url.com'
-    }
-
-    def test_to_default_datetime(self):
-        video = VideoModel(**self.video_data)
-        self.assertIsNotNone(video.datetime)
-
-    def test_raise_validation_error_on_create(self):
-        with self.assertRaises(ValidationError):
-            VideoModel(**video_error_body)
 
 
 class TestVideoController(unittest.TestCase):
     video_success_body = {
         'file_name': 'file_name_test',
         'file_size': 1024,
+        'download_url': 'http//url.com',
+        'datetime': '2020-05-19T12:00:01'
+    }
+    video_error_body = {
+        'file_name': 'file_name_test',
         'download_url': 'http//url.com',
         'datetime': '2020-05-19T12:00:01'
     }
@@ -52,7 +33,7 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_validation_error_handle(self):
-        response = self.app.post('/videos', json=video_error_body)
+        response = self.app.post('/videos', json=self.video_error_body)
 
         self.assertDictEqual(response.json, {'errors': {'file_size': 'Field is required'}})
         self.assertEqual(response.status_code, 400)
