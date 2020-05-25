@@ -9,14 +9,16 @@ from ..exceptions import InvalidParamsException
 
 
 class Video(Resource):
-    LIMIT_PARAM = 'limit'
-    LIMIT_DEFAULT = 0
     ID_KEY = 'id'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
     DOWNLOAD_URL_KEY = 'download_url'
     DATETIME_KEY = 'datetime'
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
+    LIMIT_PARAM = 'limit'
+    LIMIT_DEFAULT = 0
+    OFFSET_PARAM = 'offset'
+    OFFSET_DEFAULT = 0
 
     def post(self):
         try:
@@ -38,9 +40,10 @@ class Video(Resource):
     def get(self):
         try:
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
+            offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:
             raise InvalidParamsException(str(e))
-        result = VideoRepository().find_all(limit)
+        result = VideoRepository().find_all(limit, offset)
 
         return [self.__map_video(video) for video in result], 200
 
