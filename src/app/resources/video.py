@@ -10,6 +10,7 @@ from ..exceptions import InvalidParamsException
 
 class Video(Resource):
     ID_KEY = 'id'
+    OWNER_KEY = 'owner'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
     DOWNLOAD_URL_KEY = 'download_url'
@@ -23,7 +24,8 @@ class Video(Resource):
     def post(self):
         try:
             parse_body = request.get_json(force=True)
-            video = VideoModel(file_size=parse_body.get(self.SIZE_KEY),
+            video = VideoModel(owner=parse_body.get(self.OWNER_KEY),
+                               file_size=parse_body.get(self.SIZE_KEY),
                                file_name=parse_body.get(self.NAME_KEY),
                                download_url=parse_body.get(self.DOWNLOAD_URL_KEY),
                                datetime=datetime.strptime(parse_body.get(self.DATETIME_KEY),
