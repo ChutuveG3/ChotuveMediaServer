@@ -10,7 +10,7 @@ from . import settings
 
 from .resources import Home
 from .resources import Video
-from .resources import VideosByUsername
+from .resources import VideosByOwner
 from .exceptions import InvalidParamsException
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
-API.add_resource(VideosByUsername, '/videos/<username>')
+API.add_resource(VideosByOwner, '/videos/<owner>')
 
 
 @app.errorhandler(InvalidParamsException)
