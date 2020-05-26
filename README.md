@@ -12,21 +12,31 @@ Dependencias: Docker.
 
 Podremos acceder desde `localhost:5000`.
 
-## Correr tests
-Correr el siguiente comando:  
-`$ node2`
+### Correr tests
+Correr el siguiente comando dentro de docker:  
+`$ docker exec <app_name> nose2`
+
+## Local dev
+
+## Dependencias
+
+Si queremos levantar el servidor de manera local, debemos instalar las dependencias:  
+`$ pip install -r requirements.txt`
+
+### Levantar servidor
+
+Debemos ejecutar el siguiente comando:  
+`$ gunicorn -b 0.0.0.0:5050 src.wsgi`
+
+Podremos acceder desde `localhost:5050`
+
+### Correr tests
+
+`$ nose2`
 
 ## Logging
 
 Los mensajes de logs se mostrarán por salida estándar, con el formato
 `NIVEL <día/fecha> - <mensaje>`.
-
-|Level | When it’s used |
-| ----- | ---- |
-| DEBUG | Detailed information, typically of interest only when diagnosing problems. |  | 
-| INFO | Confirmation that things are working as expected. |
-| WARNING | An indication that something unexpected happened, or indicative of some problem in the near future (e.g. ‘disk space low’). The software is still working as expected. |   |
-| ERROR |  Due to a more serious problem, the software has not been able to perform some function. |
-| CRITICAL |  A serious error, indicating that the program itself may be unable to continue running. |
 
 Más info: [logging-doc](https://docs.python.org/3/howto/logging.html)
