@@ -7,12 +7,14 @@ from pymongo.errors import DuplicateKeyError
 
 class TestVideoController(unittest.TestCase):
     video_success_body = {
+        'owner': 'pepe',
         'file_name': 'file_name_test',
         'file_size': 1024,
         'download_url': 'http//url.com',
         'datetime': '2020-05-19T12:00:01'
     }
     video_error_body = {
+        'owner': 'pepe',
         'file_name': 'file_name_test',
         'download_url': 'http//url.com',
         'datetime': '2020-05-19T12:00:01'
@@ -53,7 +55,7 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_save.call_count, 1)
         self.assertEqual(response.status_code, 500)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_all')
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_owner')
     def test_get_all_videos_success(self, mock_find):
         response = self.app.get('/videos')
 
@@ -70,6 +72,14 @@ class TestVideoController(unittest.TestCase):
         response = self.app.get('/videos?offset=not_integer')
 
         self.assertEqual(response.status_code, 400)
+
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_owner')
+    def test_get_videos_by_owner_success(self, mock_find):
+        response = self.app.get('/videos/juan')
+
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('total' in response.headers)
 
 
 if __name__ == '__main__':
