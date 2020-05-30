@@ -40,8 +40,8 @@ class Video(Resource):
         return {self.ID_KEY: video._id}, 201
 
     def get(self):
-        id_list = [int(x) for x in request.args.getlist('id')]
         try:
+            id_list = [int(x) for x in request.args.getlist('id')]
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
             offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:

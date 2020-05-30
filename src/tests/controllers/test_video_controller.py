@@ -81,6 +81,11 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('total' in response.headers)
 
+    def test_get_video_with_invalid_id_raise_exception(self):
+        response = self.app.get('/videos?id=1&id=not_integer')
+
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()
