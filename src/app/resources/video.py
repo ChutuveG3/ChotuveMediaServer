@@ -40,12 +40,13 @@ class Video(Resource):
         return {self.ID_KEY: video._id}, 201
 
     def get(self):
+        id_list = [int(x) for x in request.args.getlist('id')]
         try:
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
             offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:
             raise InvalidParamsException(str(e))
-        result = VideoRepository().find_by_owner(limit=limit, offset=offset)
+        result = VideoRepository().find_by_id(id_list, limit, offset)
         videos = [self.map_video(video) for video in result]
 
         return videos, 200, {'total': len(videos)}

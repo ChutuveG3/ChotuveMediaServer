@@ -30,6 +30,12 @@ class VideoRepository(object):
 
         return [self.__load(data) for data in result]
 
+    def find_by_id(self, id_list, limit=0, offset=0):
+        query = {'_id': {'$in': id_list}}
+        result = self.video_collection.find(query, limit=limit, skip=offset)
+
+        return [self.__load(data) for data in result]
+
     def __load(self, data):
         return VideoModel(**data)
 
