@@ -2,6 +2,7 @@ import unittest
 
 import mock
 from app import app
+
 from pymongo.errors import DuplicateKeyError
 
 
@@ -55,9 +56,9 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_save.call_count, 1)
         self.assertEqual(response.status_code, 500)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_owner')
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_id')
     def test_get_all_videos_success(self, mock_find):
-        response = self.app.get('/videos')
+        response = self.app.get('/videos?id=1&id=2')
 
         self.assertEqual(mock_find.call_count, 1)
         self.assertEqual(response.status_code, 200)
@@ -73,13 +74,10 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_owner')
-    def test_get_videos_by_owner_success(self, mock_find):
-        response = self.app.get('/videos/juan')
+    def test_get_videos_with_invalid_id_raise_exception(self):
+        response = self.app.get('/videos?id=1&id=not_integer')
 
-        self.assertEqual(mock_find.call_count, 1)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('total' in response.headers)
+        self.assertEqual(response.status_code, 400)
 
 
 if __name__ == '__main__':

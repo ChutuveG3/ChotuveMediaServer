@@ -10,8 +10,8 @@ from . import settings
 
 from .resources import Home
 from .resources import Video
-from .resources import VideosByOwner
 from .exceptions import InvalidParamsException
+from .exceptions import VideoNotFoundException
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -30,7 +30,6 @@ logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
-API.add_resource(VideosByOwner, '/videos/<owner>')
 
 
 @app.errorhandler(InvalidParamsException)
@@ -39,5 +38,10 @@ def handle_bad_request(e):
 
 
 @app.errorhandler(PyMongoError)
-def handle_bad_request(e):
+def handle_db_errors(e):
     return {'errors': str(e)}, 500
+
+
+@app.errorhandler(VideoNotFoundException)
+def handle_video_not_found(e):
+    return {'errors': e.message}, 404

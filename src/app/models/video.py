@@ -12,7 +12,7 @@ class VideoModel(Document):
         self.validate()
 
     _id = IntField()
-    owner = StringField(validation=_not_empty, required=True)
+    owner = StringField()
     file_name = StringField(validation=_not_empty, required=True)
     file_size = IntField(validation=_not_empty, required=True,  min_value=0)
     download_url = StringField(validation=_not_empty, required=True)
