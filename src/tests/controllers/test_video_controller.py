@@ -3,7 +3,6 @@ import unittest
 import mock
 from app import app
 
-from src.app.exceptions.video_not_found_exception import VideoNotFoundException
 from pymongo.errors import DuplicateKeyError
 
 
@@ -74,14 +73,6 @@ class TestVideoController(unittest.TestCase):
         response = self.app.get('/videos?offset=not_integer')
 
         self.assertEqual(response.status_code, 400)
-
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_owner')
-    def test_get_videos_by_owner_success(self, mock_find):
-        response = self.app.get('/videos/juan')
-
-        self.assertEqual(mock_find.call_count, 1)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('total' in response.headers)
 
     def test_get_videos_with_invalid_id_raise_exception(self):
         response = self.app.get('/videos?id=1&id=not_integer')
