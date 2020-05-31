@@ -2,6 +2,8 @@ import unittest
 
 import mock
 from app import app
+
+from src.app.exceptions.video_not_found_exception import VideoNotFoundException
 from pymongo.errors import DuplicateKeyError
 
 
@@ -81,7 +83,7 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('total' in response.headers)
 
-    def test_get_video_with_invalid_id_raise_exception(self):
+    def test_get_videos_with_invalid_id_raise_exception(self):
         response = self.app.get('/videos?id=1&id=not_integer')
 
         self.assertEqual(response.status_code, 400)

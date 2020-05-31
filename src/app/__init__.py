@@ -12,6 +12,7 @@ from .resources import Home
 from .resources import Video
 from .resources import VideosByOwner
 from .exceptions import InvalidParamsException
+from .exceptions import VideoNotFoundException
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -39,5 +40,10 @@ def handle_bad_request(e):
 
 
 @app.errorhandler(PyMongoError)
-def handle_bad_request(e):
+def handle_db_errors(e):
     return {'errors': str(e)}, 500
+
+
+@app.errorhandler(VideoNotFoundException)
+def handle_video_not_found(e):
+    return {'errors': e.message}, 404

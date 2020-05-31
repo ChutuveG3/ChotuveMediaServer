@@ -6,6 +6,7 @@ from mongoengine import ValidationError
 from ..models import VideoModel
 from ..repositories import *
 from ..exceptions import InvalidParamsException
+from ..exceptions import VideoNotFoundException
 
 
 class Video(Resource):
@@ -41,7 +42,7 @@ class Video(Resource):
 
     def get(self):
         try:
-            id_list = [int(x) for x in request.args.getlist('id')]
+            id_list = [int(x) for x in request.args.getlist(self.ID_KEY)]
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
             offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:
@@ -53,6 +54,5 @@ class Video(Resource):
 
     def map_video(self, video):
         return {self.ID_KEY: video._id,
-                self.SIZE_KEY: video.file_size,
                 self.DOWNLOAD_URL_KEY: video.download_url,
                 self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}
