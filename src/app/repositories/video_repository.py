@@ -31,7 +31,7 @@ class VideoRepository(object):
 
         return [self._load(data) for data in result]
 
-    def find_by_id(self, id_list, limit=0, offset=0):
+    def find_by_id(self, id_list=[], limit=0, offset=0):
         '''
         :param id_list: filter by video id's.
         :param limit: limit count return values. A limit value of 0 (i.e. .limit(0)) is
@@ -40,7 +40,7 @@ class VideoRepository(object):
         equivalent to setting no offset.
         :return: list of Videos. Raise VideoNotFoundException when result lt id´s.
         '''
-        query = {'_id': {'$in': id_list}}
+        query = {'_id': {'$in': id_list}} if id_list else {}
         result = self.video_collection.find(query, limit=limit, skip=offset)
         if result.count(True) < len(id_list):
             raise VideoNotFoundException('videos not found')
