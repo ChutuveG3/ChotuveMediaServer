@@ -1,24 +1,32 @@
 from datetime import datetime
 from flask_restful import Resource
-from flask import request, Response
+from flask import request
 from mongoengine import ValidationError
 
 from ..models import VideoModel
 from ..repositories import *
 from ..exceptions import InvalidParamsException
+from ..exceptions import VideoNotFoundException
 
 
 class Video(Resource):
+    ID_KEY = 'id'
+    OWNER_KEY = 'owner'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
     DOWNLOAD_URL_KEY = 'download_url'
     DATETIME_KEY = 'datetime'
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
+    LIMIT_PARAM = 'limit'
+    LIMIT_DEFAULT = 0
+    OFFSET_PARAM = 'offset'
+    OFFSET_DEFAULT = 0
 
     def post(self):
         try:
             parse_body = request.get_json(force=True)
-            video = VideoModel(file_size=parse_body.get(self.SIZE_KEY),
+            video = VideoModel(owner=parse_body.get(self.OWNER_KEY),
+                               file_size=parse_body.get(self.SIZE_KEY),
                                file_name=parse_body.get(self.NAME_KEY),
                                download_url=parse_body.get(self.DOWNLOAD_URL_KEY),
                                datetime=datetime.strptime(parse_body.get(self.DATETIME_KEY),
@@ -30,4 +38,21 @@ class Video(Resource):
         except ValidationError as e:
             raise InvalidParamsException(e.to_dict())
 
-        return {'id': video._id}, 201
+        return {self.ID_KEY: video._id}, 201
+
+    def get(self):
+        try:
+            id_list = [int(x) for x in request.args.getlist(self.ID_KEY)]
+            limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
+            offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
+        except ValueError as e:
+            raise InvalidParamsException(str(e))
+        result = VideoRepository().find_by_id(id_list, limit, offset)
+        videos = [self.map_video(video) for video in result]
+
+        return videos, 200, {'total': len(videos)}
+
+    def map_video(self, video):
+        return {self.ID_KEY: video._id,
+                self.DOWNLOAD_URL_KEY: video.download_url,
+                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}

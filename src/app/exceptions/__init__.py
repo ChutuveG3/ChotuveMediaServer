@@ -1,1 +1,2 @@
 from .invalid_params_exception import InvalidParamsException
+from .video_not_found_exception import VideoNotFoundException
