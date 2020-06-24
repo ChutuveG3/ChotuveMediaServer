@@ -8,14 +8,12 @@ from pymongo.errors import DuplicateKeyError
 
 class TestVideoController(unittest.TestCase):
     video_success_body = {
-        'owner': 'pepe',
         'file_name': 'file_name_test',
         'file_size': 1024,
         'download_url': 'http//url.com',
         'datetime': '2020-05-19T12:00:01'
     }
     video_error_body = {
-        'owner': 'pepe',
         'file_name': 'file_name_test',
         'download_url': 'http//url.com',
         'datetime': '2020-05-19T12:00:01'
@@ -78,6 +76,15 @@ class TestVideoController(unittest.TestCase):
         response = self.app.get('/videos?id=1&id=not_integer')
 
         self.assertEqual(response.status_code, 400)
+
+    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    @mock.patch('app.repositories.video_repository.VideoRepository.delete')
+    def test_delete_video_success(self, mock_delete, mock_find):
+        response = self.app.delete('/videos/10')
+
+        self.assertEqual(mock_delete.call_count, 1)
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
