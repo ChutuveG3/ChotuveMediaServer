@@ -12,7 +12,8 @@ class VideoById(Resource):
         except ValueError as e:
             raise InvalidParamsException(str(e))
 
-        video = VideoRepository().find_by_id(id_list=[video_id])
-        VideoRepository().delete(video[0])
+        repo = VideoRepository()
+        video = repo.find_by_id(id_list=[video_id]).pop()
+        repo.delete(video)
 
         return {}, 200
