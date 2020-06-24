@@ -86,6 +86,11 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_find.call_count, 1)
         self.assertEqual(response.status_code, 200)
 
+    def test_delete_video_invalid_id(self):
+        response = self.app.delete('/videos/not_integer')
+
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()
