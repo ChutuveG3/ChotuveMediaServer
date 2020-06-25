@@ -1,6 +1,6 @@
 import unittest
 
-import mock
+from mock import Mock, patch
 from app import app
 
 from pymongo.errors import DuplicateKeyError
@@ -25,7 +25,7 @@ class TestVideoController(unittest.TestCase):
         # propagate the exceptions to the test client
         self.app.testing = True
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.save')
+    @patch('app.repositories.video_repository.VideoRepository.save')
     def test_success_video_upload(self, mock_save):
         response = self.app.post('/videos', json=self.video_success_body)
 
@@ -46,7 +46,7 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.save')
+    @patch('app.repositories.video_repository.VideoRepository.save')
     def test_handle_duplicate_key_error(self, mock_save):
         mock_save.side_effect = DuplicateKeyError('test')
         response = self.app.post('/videos', json=self.video_success_body)
@@ -54,7 +54,7 @@ class TestVideoController(unittest.TestCase):
         self.assertEqual(mock_save.call_count, 1)
         self.assertEqual(response.status_code, 500)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
     def test_get_all_videos_success(self, mock_find):
         response = self.app.get('/videos?id=1&id=2')
 
@@ -77,19 +77,36 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-    @mock.patch('app.repositories.video_repository.VideoRepository.find_by_id')
-    @mock.patch('app.repositories.video_repository.VideoRepository.delete')
-    def test_delete_video_success(self, mock_delete, mock_find):
+    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    @patch('app.repositories.video_repository.VideoRepository.delete')
+    @patch('requests.delete')
+    def test_delete_video_success(self, mock_app_req, mock_delete, mock_find):
+        # Set up delete req mock.
+        mock_app_req.return_value = Mock(status_code=200, json=lambda: {"message": "ok"})
+        # Delete video with id = 10.
         response = self.app.delete('/videos/10')
 
         self.assertEqual(mock_delete.call_count, 1)
         self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(mock_app_req.call_count, 1)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_video_invalid_id(self):
         response = self.app.delete('/videos/not_integer')
 
         self.assertEqual(response.status_code, 400)
+
+    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    @patch('requests.delete')
+    def test_delete_video_app_server_error(self, mock_app_req, mock_find):
+        # Set up delete req mock: video not found.
+        mock_app_req.return_value = Mock(status_code=404, json=lambda: {"error": "not found"})
+        # Delete video with id = 10.
+        response = self.app.delete('/videos/10')
+
+        self.assertEqual(mock_app_req.call_count, 1)
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 402)
 
 
 if __name__ == '__main__':
