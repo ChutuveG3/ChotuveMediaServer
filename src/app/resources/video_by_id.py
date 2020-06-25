@@ -18,7 +18,7 @@ class VideoById(Resource):
         repo = VideoRepository()
         video = repo.find_by_id(id_list=[video_id]).pop()
 
-        app_delete_url = os.getenv('APP_BASE_URL') + f'/video/{video_id}'
+        app_delete_url = os.getenv('APP_BASE_URL', "") + f'/video/{video_id}'
         headers = {'content-type': 'application/json',
                    'authorization': request.headers.get('authorization')}
         response = requests.delete(app_delete_url, headers=headers)
