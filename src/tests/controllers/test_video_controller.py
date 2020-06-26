@@ -79,34 +79,18 @@ class TestVideoController(unittest.TestCase):
 
     @patch('app.repositories.video_repository.VideoRepository.find_by_id')
     @patch('app.repositories.video_repository.VideoRepository.delete')
-    @patch('requests.delete')
-    def test_delete_video_success(self, mock_app_req, mock_delete, mock_find):
-        # Set up delete req mock.
-        mock_app_req.return_value = Mock(status_code=200, json=lambda: {"message": "ok"})
+    def test_delete_video_success(self, mock_delete, mock_find):
         # Delete video with id = 10.
         response = self.app.delete('/videos/10')
 
         self.assertEqual(mock_delete.call_count, 1)
         self.assertEqual(mock_find.call_count, 1)
-        self.assertEqual(mock_app_req.call_count, 1)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_video_invalid_id(self):
         response = self.app.delete('/videos/not_integer')
 
         self.assertEqual(response.status_code, 400)
-
-    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
-    @patch('requests.delete')
-    def test_delete_video_app_server_error(self, mock_app_req, mock_find):
-        # Set up delete req mock: video not found.
-        mock_app_req.return_value = Mock(status_code=404, json=lambda: {"error": "not found"})
-        # Delete video with id = 10.
-        response = self.app.delete('/videos/10')
-
-        self.assertEqual(mock_app_req.call_count, 1)
-        self.assertEqual(mock_find.call_count, 1)
-        self.assertEqual(response.status_code, 402)
 
 
 if __name__ == '__main__':
