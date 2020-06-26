@@ -1,7 +1,8 @@
 import logging
 import os
+import requests
 
-from flask import Flask
+from flask import Flask, request, abort
 from pymongo import MongoClient
 from flask_restful import Api
 from pymongo.errors import PyMongoError

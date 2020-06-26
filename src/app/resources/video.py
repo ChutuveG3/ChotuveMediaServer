@@ -6,7 +6,6 @@ from mongoengine import ValidationError
 from ..models import VideoModel
 from ..repositories import *
 from ..exceptions import InvalidParamsException
-from ..exceptions import VideoNotFoundException
 
 
 class Video(Resource):

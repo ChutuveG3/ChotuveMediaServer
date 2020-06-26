@@ -26,6 +26,10 @@ class TestVideoController(unittest.TestCase):
         self.app = app.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True
+        # mock access token validation
+        # self.patcher = mock.patch('app.requests.get')
+        # self.patcher.return_value = mock.Mock(status_code=200, json=lambda: {"message": "ok"})
+        # self.mock = self.patcher.start()
 
     @mock.patch('app.repositories.video_repository.VideoRepository.save')
     def test_success_video_upload(self, mock_save):
