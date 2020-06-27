@@ -1,5 +1,5 @@
 [![Build Status](https://www.travis-ci.org/ChutuveG3/ChotuveMediaServer.svg?branch=master)](https://www.travis-ci.org/ChutuveG3/ChotuveMediaServer)
-
+[![Coverage Status](https://coveralls.io/repos/github/ChutuveG3/ChotuveMediaServer/badge.svg?branch=HEAD)](https://coveralls.io/github/ChutuveG3/ChotuveMediaServer?branch=HEAD)
 # ChotuveMediaServer
 
 ## Levantar el servidor con Docker  

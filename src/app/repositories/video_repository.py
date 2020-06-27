@@ -33,6 +33,10 @@ class VideoRepository(object):
 
         return [self._load(data) for data in result]
 
+    def delete(self, video):
+        query = { '_id': video._id}
+        self.video_collection.delete_one(query)
+
     def _load(self, data):
         return VideoModel(**data)
 

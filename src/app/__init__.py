@@ -10,6 +10,7 @@ from . import settings
 
 from .resources import Home
 from .resources import Video
+from .resources.video_by_id import VideoById
 from .exceptions import InvalidParamsException
 from .exceptions import VideoNotFoundException
 
@@ -30,6 +31,7 @@ logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
+API.add_resource(VideoById, '/videos/<video_id>')
 
 
 @app.errorhandler(InvalidParamsException)
