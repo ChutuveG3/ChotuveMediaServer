@@ -1,6 +1,6 @@
 from pymongo import ReturnDocument
 
-from src.app.exceptions import VideoNotFoundException
+from src.app.exceptions import VideoNotFoundError
 from src.app.models import VideoModel
 
 
@@ -24,12 +24,12 @@ class VideoRepository(object):
         equivalent to setting no limit.
         :param offset: skip offset videos. A offset value of 0 (i.e. .limit(0)) is
         equivalent to setting no offset.
-        :return: list of Videos. Raise VideoNotFoundException when result lt id´s.
+        :return: list of Videos. Raise VideoNotFoundError when result lt id´s.
         '''
         query = {'_id': {'$in': id_list}} if id_list else {}
         result = self.video_collection.find(query, limit=limit, skip=offset)
         if result.count(True) < len(id_list):
-            raise VideoNotFoundException('videos not found')
+            raise VideoNotFoundError('videos not found')
 
         return [self._load(data) for data in result]
 

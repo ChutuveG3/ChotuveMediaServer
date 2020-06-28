@@ -5,7 +5,7 @@ from mongoengine import ValidationError
 
 from ..models import VideoModel
 from ..repositories import *
-from ..exceptions import InvalidParamsException
+from ..exceptions import InvalidParamsError
 
 
 class Video(Resource):
@@ -33,9 +33,9 @@ class Video(Resource):
                                )
             VideoRepository().save(video)
         except (ValueError, TypeError) as e:
-            raise InvalidParamsException(str(e))
+            raise InvalidParamsError(str(e))
         except ValidationError as e:
-            raise InvalidParamsException(e.to_dict())
+            raise InvalidParamsError(e.to_dict())
 
         return {self.ID_KEY: video._id}, 201
 
@@ -45,7 +45,7 @@ class Video(Resource):
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
             offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
         except ValueError as e:
-            raise InvalidParamsException(str(e))
+            raise InvalidParamsError(str(e))
         result = VideoRepository().find_by_id(id_list, limit, offset)
         videos = [self.map_video(video) for video in result]
 
