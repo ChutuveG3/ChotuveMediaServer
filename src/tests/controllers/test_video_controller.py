@@ -67,8 +67,8 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-    def test_get_all_videos_with_invalid_offset(self):
-        response = self.app.get('/videos?offset=not_integer')
+    def test_get_all_videos_with_invalid_page_number(self):
+        response = self.app.get('/videos?page=not_integer')
 
         self.assertEqual(response.status_code, 400)
 

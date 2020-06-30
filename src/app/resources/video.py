@@ -17,8 +17,8 @@ class Video(Resource):
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
     LIMIT_PARAM = 'limit'
     LIMIT_DEFAULT = 0
-    OFFSET_PARAM = 'offset'
-    OFFSET_DEFAULT = 0
+    PAGE_PARAM = 'page'
+    PAGE_DEFAULT = 0
 
     def post(self):
         try:
@@ -41,15 +41,18 @@ class Video(Resource):
         try:
             id_list = [int(x) for x in request.args.getlist(self.ID_KEY)]
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
-            offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
+            page = int(request.args.get(self.PAGE_PARAM, self.PAGE_DEFAULT))
         except ValueError as e:
             raise InvalidParamsException(str(e))
-        result = VideoRepository().find_by_id(id_list, limit, offset)
+        result = VideoRepository().find_by_id(id_list, limit, page)
         videos = [self.map_video(video) for video in result]
 
         return videos, 200, {'total': len(videos)}
 
     def map_video(self, video):
         return {self.ID_KEY: video._id,
+                self.NAME_KEY: video.file_name,
                 self.DOWNLOAD_URL_KEY: video.download_url,
-                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}
+                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT),
+                self.SIZE_KEY: video.file_size
+                }
