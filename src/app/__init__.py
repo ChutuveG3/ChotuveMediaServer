@@ -10,8 +10,10 @@ from . import settings
 
 from .resources import Home
 from .resources import Video
+from .resources.video_by_id import VideoById
 from .services import AuthService
 from .exceptions import *
+
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -30,6 +32,7 @@ logger.info(f'Connected to DB: {db.name}')
 
 API.add_resource(Home, '/')
 API.add_resource(Video, '/videos')
+API.add_resource(VideoById, '/videos/<video_id>')
 
 
 @app.errorhandler(InvalidParamsError)
@@ -63,3 +66,11 @@ def auth_before_request():
     if not AuthService.validate_admin_token(admin_token) and \
             not AuthService.validate_app_server(app_server_key):
         return {'errors': 'authorization error'}, 401
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
