@@ -5,6 +5,8 @@ from app import app
 
 from pymongo.errors import DuplicateKeyError
 
+from tests.clients import AppServerTestClient
+
 
 class TestVideoController(unittest.TestCase):
     video_success_body = {
@@ -21,9 +23,18 @@ class TestVideoController(unittest.TestCase):
 
     def setUp(self):
         # creates a test client
+        app.test_client_class = AppServerTestClient
         self.app = app.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True
+        # mock auth validations
+        self.patcher = patch('app.services.auth_service.AuthService.validate_app_server',
+                             return_value=True)
+        self.mock = self.patcher.start()
+
+    def tearDown(self):
+        # stop validation mock
+        self.patcher.stop()
 
     @patch('app.repositories.video_repository.VideoRepository.save')
     def test_success_video_upload(self, mock_save):
@@ -101,7 +112,6 @@ class TestVideoController(unittest.TestCase):
         self.assertTrue('Access-Control-Allow-Origin' in response.headers)
         self.assertTrue('Access-Control-Allow-Headers' in response.headers)
         self.assertTrue('Access-Control-Allow-Methods' in response.headers)
-
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from pymongo import ReturnDocument
 
-from src.app.exceptions import VideoNotFoundException
+from src.app.exceptions import VideoNotFoundError
 from src.app.models import VideoModel
 
 
@@ -29,7 +29,7 @@ class VideoRepository(object):
         query = {'_id': {'$in': id_list}} if id_list else {}
         result = self.video_collection.find(query, limit=limit, skip=page*limit)
         if result.count(True) < len(id_list):
-            raise VideoNotFoundException('videos not found')
+            raise VideoNotFoundError('videos not found')
 
         return [self._load(data) for data in result]
 

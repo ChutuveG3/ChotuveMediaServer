@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, request
 from pymongo import MongoClient
 from flask_restful import Api
 from pymongo.errors import PyMongoError
@@ -11,8 +11,9 @@ from . import settings
 from .resources import Home
 from .resources import Video
 from .resources.video_by_id import VideoById
-from .exceptions import InvalidParamsException
-from .exceptions import VideoNotFoundException
+from .services import AuthService
+from .exceptions import *
+
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -34,7 +35,7 @@ API.add_resource(Video, '/videos')
 API.add_resource(VideoById, '/videos/<video_id>')
 
 
-@app.errorhandler(InvalidParamsException)
+@app.errorhandler(InvalidParamsError)
 def handle_bad_request(e):
     return {'errors': e.message}, 400
 
@@ -44,9 +45,27 @@ def handle_db_errors(e):
     return {'errors': str(e)}, 500
 
 
-@app.errorhandler(VideoNotFoundException)
+@app.errorhandler(VideoNotFoundError)
 def handle_video_not_found(e):
     return {'errors': e.message}, 404
+
+
+@app.errorhandler(AuthServerError)
+def handle_auth_server_error(e):
+    return {'errors': 'auth server error'}, 502
+
+
+@app.before_request
+def auth_before_request():
+    # TODO: refactor this
+    if request.endpoint == 'home':
+        return
+
+    admin_token = request.headers.get('authorization')
+    app_server_key = request.headers.get('x_api_key')
+    if not AuthService.validate_admin_token(admin_token) and \
+            not AuthService.validate_app_server(app_server_key):
+        return {'errors': 'authorization error'}, 401
 
 
 @app.after_request
