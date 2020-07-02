@@ -50,27 +50,19 @@ def handle_video_not_found(e):
     return {'errors': e.message}, 404
 
 
-@app.errorhandler(AuthServerError)
-def handle_auth_server_error(e):
-    return {'errors': 'auth server error'}, 502
+@app.errorhandler(AuthenticationError)
+def handle_authentication_error(e):
+    return {'errors': e.message}, 401
 
 
-@app.before_request
-def auth_before_request():
-    # TODO Refactor this with middleware or decorator.
-    if request.endpoint == 'home' or request.method == 'OPTIONS':
-        return
-
-    admin_token = request.headers.get('authorization')
-    app_server_key = request.headers.get('x_api_key')
-    if not AuthService.validate_admin_token(admin_token) and \
-            not AuthService.validate_app_server(app_server_key):
-        return {'errors': 'authorization error'}, 401
+@app.errorhandler(AuthorizationError)
+def handle_authorization_error(e):
+    return {'errors': e.message}, 403
 
 
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     return response

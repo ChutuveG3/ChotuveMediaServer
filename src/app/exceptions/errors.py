@@ -1,31 +1,41 @@
 class MediaError(Exception):
-    DEFAULT_MESSAGE = 'default message'
+    DEFAULT_MESSAGE = 'unknown exception'
 
     def __init__(self, message=DEFAULT_MESSAGE):
         self.message = message
 
 
 class AuthServerError(MediaError):
-    def __init__(self, message="default message"):
-        super().__init__(message)
+    DEFAULT_MESSAGE = "auth server error"
+
+    def __init__(self, message=DEFAULT_MESSAGE):
+        self.message = message
 
 
 class InvalidParamsError(MediaError):
-    def __init__(self, message="default message"):
-        super().__init__(message)
+    DEFAULT_MESSAGE = "invalid params"
+
+    def __init__(self, message=DEFAULT_MESSAGE):
+        self.message = message
 
 
 class VideoNotFoundError(MediaError):
-    def __init__(self, message="default message"):
-        super().__init__(message)
+    DEFAULT_MESSAGE = "video not found"
+
+    def __init__(self, message=DEFAULT_MESSAGE):
+        self.message = message
 
 
 class AuthorizationError(AuthServerError):
-    def __init__(self, message="default message"):
-        super().__init__(message)
+    DEFAULT_MESSAGE = "authorization error"
+
+    def __init__(self, message=DEFAULT_MESSAGE):
+        self.message = message
 
 
 class AuthenticationError(AuthServerError):
-    def __init__(self, message="default message"):
-        super().__init__(message)
+    DEFAULT_MESSAGE = "authentication error"
+
+    def __init__(self, message=DEFAULT_MESSAGE):
+        self.message = message
 

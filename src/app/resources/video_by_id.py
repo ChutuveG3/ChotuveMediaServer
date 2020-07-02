@@ -1,12 +1,12 @@
-import requests
-import os
-
 from flask_restful import Resource
 from ..exceptions import InvalidParamsError
-from ..repositories import *
+from ..repositories import VideoRepository
+from ..services.decorators import app_server_authenticate
 
 
 class VideoById(Resource):
+    method_decorators = {'delete': [app_server_authenticate]}
+
     def delete(self, video_id):
         try:
             video_id = int(video_id)
