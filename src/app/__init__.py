@@ -53,13 +53,13 @@ def handle_auth_server_error(e):
 
 
 @app.before_request
-def auth():
-    app_server_key = request.headers.get(['authorization'])
-    admin_token = request.headers.get(['x_api_key'])
+def auth_before_request():
+    # TODO: refactor this
+    if request.endpoint == 'home':
+        return
 
-    # if admin_token:
-    #     AuthService.validate_admin_token(admin_token)
-    # elif app_server_key:
-    #     AuthService.validate_app_server(app_server_key)
-    # else:
-    #     return {'errors': 'auth server error'}, 401
+    admin_token = request.headers.get('authorization')
+    app_server_key = request.headers.get('x_api_key')
+    if not AuthService.validate_admin_token(admin_token) and \
+            not AuthService.validate_app_server(app_server_key):
+        return {'errors': 'authorization error'}, 401
