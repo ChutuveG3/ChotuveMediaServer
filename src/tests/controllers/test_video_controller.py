@@ -28,8 +28,8 @@ class TestVideoController(unittest.TestCase):
         # propagate the exceptions to the test client
         self.app.testing = True
         # mock auth validations
-        self.patcher = mock.patch('app.services.auth_service.AuthService.validate_app_server',
-                                  return_value=True)
+        self.patcher = patch('app.services.auth_service.AuthService.validate_app_server',
+                             return_value=True)
         self.mock = self.patcher.start()
 
     def tearDown(self):
@@ -112,7 +112,6 @@ class TestVideoController(unittest.TestCase):
         self.assertTrue('Access-Control-Allow-Origin' in response.headers)
         self.assertTrue('Access-Control-Allow-Headers' in response.headers)
         self.assertTrue('Access-Control-Allow-Methods' in response.headers)
-
 
 
 if __name__ == '__main__':
