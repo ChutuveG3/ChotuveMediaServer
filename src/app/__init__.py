@@ -57,8 +57,8 @@ def handle_auth_server_error(e):
 
 @app.before_request
 def auth_before_request():
-    # TODO: refactor this
-    if request.endpoint == 'home':
+    # TODO Refactor this with middleware or decorator.
+    if request.endpoint == 'home' or request.method == 'OPTIONS':
         return
 
     admin_token = request.headers.get('authorization')
