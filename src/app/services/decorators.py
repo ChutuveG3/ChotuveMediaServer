@@ -38,7 +38,6 @@ def server_or_admin_authenticate(func):
     def wrapper(*args, **kwargs):
         api_key = request.headers.get(APP_SERVER_AUTH_KEY)
         token = request.headers.get(ADMIN_AUTH_KEY)
-
         if AuthService.validate_app_server(api_key) or \
                 AuthService.validate_admin_token(token):
             return func(*args, **kwargs)

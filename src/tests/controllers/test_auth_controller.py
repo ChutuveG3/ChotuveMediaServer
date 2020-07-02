@@ -11,6 +11,7 @@ class TestVideoController(unittest.TestCase):
 
     def setUp(self):
         # default client (without auth headers)
+        app.test_client_class = None
         self.app_client = app.test_client()
         # app server client
         app.test_client_class = AppServerTestClient
