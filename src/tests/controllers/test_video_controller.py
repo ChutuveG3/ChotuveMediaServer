@@ -92,6 +92,17 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    def test_get_all_videos_resp_headers(self, mock_find):
+        response = self.app.get('/videos')
+
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('Access-Control-Allow-Origin' in response.headers)
+        self.assertTrue('Access-Control-Allow-Headers' in response.headers)
+        self.assertTrue('Access-Control-Allow-Methods' in response.headers)
+
+
 
 if __name__ == '__main__':
     unittest.main()
