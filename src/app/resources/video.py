@@ -6,9 +6,12 @@ from mongoengine import ValidationError
 from ..models import VideoModel
 from ..repositories import *
 from ..exceptions import InvalidParamsError
+from ..services.decorators import server_or_admin_authenticate
 
 
 class Video(Resource):
+    method_decorators = {'get': [server_or_admin_authenticate],
+                         'post': [server_or_admin_authenticate]}
     ID_KEY = 'id'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
