@@ -26,11 +26,15 @@ class Video(Resource):
     def post(self):
         try:
             parse_body = request.get_json(force=True)
+
+            date = parse_body.get(self.DATETIME_KEY, None)
+            if date:
+                date = datetime.strptime(date, self.DATE_FORMAT)
+
             video = VideoModel(file_size=parse_body.get(self.SIZE_KEY),
                                file_name=parse_body.get(self.NAME_KEY),
                                download_url=parse_body.get(self.DOWNLOAD_URL_KEY),
-                               datetime=datetime.strptime(parse_body.get(self.DATETIME_KEY),
-                                                          self.DATE_FORMAT)
+                               datetime=date
                                )
             VideoRepository().save(video)
         except (ValueError, TypeError) as e:
