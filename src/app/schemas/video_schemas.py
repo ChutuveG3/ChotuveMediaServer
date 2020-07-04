@@ -24,3 +24,8 @@ class GetVideosSchema(Schema):
     id = fields.List(fields.Integer, attribute=ID_KEY, allow_none=True)
     page = fields.Integer(attribute=PAGE_KEY, allow_none=True)
     limit = fields.Integer(attribute=LIMIT_KEY, allow_none=True)
+
+
+class DeleteVideoByIdSchema(Schema):
+    id = fields.Integer(required=True)
+

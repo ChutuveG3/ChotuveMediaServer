@@ -14,11 +14,7 @@ from ..services.decorators import server_or_admin_authenticate
 class Video(Resource):
     method_decorators = {'get': [server_or_admin_authenticate],
                          'post': [server_or_admin_authenticate]}
-    ID_KEY = 'id'
-    LIMIT_PARAM = 'limit'
-    LIMIT_DEFAULT = 0
-    PAGE_PARAM = 'page'
-    PAGE_DEFAULT = 0
+    ID_RETURN_KEY = 'id'
 
     def post(self):
         try:
@@ -38,14 +34,14 @@ class Video(Resource):
         except (ValidationError, marshmallow.ValidationError) as e:
             raise InvalidParamsError()
 
-        return {self.ID_KEY: video._id}, 201
+        return {self.ID_RETURN_KEY: video._id}, 201
 
     def get(self):
         try:
             args = request.args.to_dict()
-            args[self.ID_KEY] = request.args.getlist(self.ID_KEY)
-
             schema = GetVideosSchema()
+
+            args[schema.ID_KEY] = request.args.getlist(schema.ID_KEY)
             query_data = schema.load(args)
         except marshmallow.ValidationError:
             raise InvalidParamsError()
@@ -61,7 +57,7 @@ class Video(Resource):
 
     def map_video(self, video):
         return {
-            self.ID_KEY: video._id,
+            GetVideosSchema.ID_KEY: video._id,
             CreateVideoSchema.NAME_KEY: video.file_name,
             CreateVideoSchema.DOWNLOAD_URL_KEY: video.download_url,
             CreateVideoSchema.UPLOAD_DATE_KEY: video.datetime.strftime(CreateVideoSchema.DATE_FORMAT),
