@@ -11,3 +11,5 @@ mock==4.0.2
 python-dotenv==0.13.0
 coverage==5.1
 coveralls==2.0.0
+marshmallow==3.6.1
+MyApplication==0.1.0

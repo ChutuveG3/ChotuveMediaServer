@@ -13,7 +13,7 @@ class TestVideoModel(unittest.TestCase):
     }
     video_error_body = {
         'file_name': 'file_name_test',
-        'download_url': 'http//url.com',
+        'download_url': 'http://url.com',
         'datetime': '2020-05-19T12:00:01'
     }
 
