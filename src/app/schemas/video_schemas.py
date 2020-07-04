@@ -9,7 +9,7 @@ class CreateVideoSchema(Schema):
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
     file_name = fields.String(attribute=NAME_KEY, required=True)
-    file_size = fields.Number(attribute=SIZE_KEY, required=True)
+    file_size = fields.Integer(attribute=SIZE_KEY, required=True)
     datetime = fields.NaiveDateTime(DATE_FORMAT, attribute=UPLOAD_DATE_KEY, allow_none=True)
     download_url = fields.String(required=True)
 
@@ -21,6 +21,6 @@ class GetVideosSchema(Schema):
     PAGE_KEY = 'page'
     PAGE_DEFAULT = 0
 
-    id = fields.List(fields.Number, allow_none=True)
-    page = fields.Number(allow_none=True)
-    limit = fields.Number(allow_none=True)
+    id = fields.List(fields.Integer, attribute=ID_KEY, allow_none=True)
+    page = fields.Integer(attribute=PAGE_KEY, allow_none=True)
+    limit = fields.Integer(attribute=LIMIT_KEY, allow_none=True)

@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 from ..models import VideoModel
 from ..repositories import *
 from ..exceptions import InvalidParamsError
-from ..schemas import CreateVideoSchema
+from ..schemas import CreateVideoSchema, GetVideosSchema
 from ..services.decorators import server_or_admin_authenticate
 
 
@@ -42,11 +42,17 @@ class Video(Resource):
 
     def get(self):
         try:
-            id_list = [int(x) for x in request.args.getlist(self.ID_KEY)]
-            limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
-            page = int(request.args.get(self.PAGE_PARAM, self.PAGE_DEFAULT))
-        except ValueError as e:
-            raise InvalidParamsError(str(e))
+            args = request.args.to_dict()
+            args[self.ID_KEY] = request.args.getlist(self.ID_KEY)
+
+            schema = GetVideosSchema()
+            query_data = schema.load(args)
+        except marshmallow.ValidationError:
+            raise InvalidParamsError()
+
+        id_list = query_data.get(schema.ID_KEY)
+        limit = query_data.get(schema.LIMIT_KEY, schema.LIMIT_DEFAULT)
+        page = query_data.get(schema.PAGE_KEY, schema.PAGE_DEFAULT)
 
         result = VideoRepository().find_by_id(id_list, limit, page)
         videos = [self.map_video(video) for video in result]
