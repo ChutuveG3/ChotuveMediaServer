@@ -5,13 +5,14 @@ from mongoengine import ValidationError
 
 from ..models import VideoModel
 from ..repositories import *
-from ..exceptions import InvalidParamsException
-from ..exceptions import VideoNotFoundException
+from ..exceptions import InvalidParamsError
+from ..services.decorators import server_or_admin_authenticate
 
 
 class Video(Resource):
+    method_decorators = {'get': [server_or_admin_authenticate],
+                         'post': [server_or_admin_authenticate]}
     ID_KEY = 'id'
-    OWNER_KEY = 'owner'
     SIZE_KEY = 'file_size'
     NAME_KEY = 'file_name'
     DOWNLOAD_URL_KEY = 'download_url'
@@ -19,24 +20,27 @@ class Video(Resource):
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
     LIMIT_PARAM = 'limit'
     LIMIT_DEFAULT = 0
-    OFFSET_PARAM = 'offset'
-    OFFSET_DEFAULT = 0
+    PAGE_PARAM = 'page'
+    PAGE_DEFAULT = 0
 
     def post(self):
         try:
             parse_body = request.get_json(force=True)
-            video = VideoModel(owner=parse_body.get(self.OWNER_KEY),
-                               file_size=parse_body.get(self.SIZE_KEY),
+
+            date = parse_body.get(self.DATETIME_KEY, None)
+            if date:
+                date = datetime.strptime(date, self.DATE_FORMAT)
+
+            video = VideoModel(file_size=parse_body.get(self.SIZE_KEY),
                                file_name=parse_body.get(self.NAME_KEY),
                                download_url=parse_body.get(self.DOWNLOAD_URL_KEY),
-                               datetime=datetime.strptime(parse_body.get(self.DATETIME_KEY),
-                                                          self.DATE_FORMAT)
+                               datetime=date
                                )
             VideoRepository().save(video)
         except (ValueError, TypeError) as e:
-            raise InvalidParamsException(str(e))
+            raise InvalidParamsError(str(e))
         except ValidationError as e:
-            raise InvalidParamsException(e.to_dict())
+            raise InvalidParamsError(e.to_dict())
 
         return {self.ID_KEY: video._id}, 201
 
@@ -44,15 +48,19 @@ class Video(Resource):
         try:
             id_list = [int(x) for x in request.args.getlist(self.ID_KEY)]
             limit = int(request.args.get(self.LIMIT_PARAM, self.LIMIT_DEFAULT))
-            offset = int(request.args.get(self.OFFSET_PARAM, self.OFFSET_DEFAULT))
+            page = int(request.args.get(self.PAGE_PARAM, self.PAGE_DEFAULT))
         except ValueError as e:
-            raise InvalidParamsException(str(e))
-        result = VideoRepository().find_by_id(id_list, limit, offset)
+            raise InvalidParamsError(str(e))
+
+        result = VideoRepository().find_by_id(id_list, limit, page)
         videos = [self.map_video(video) for video in result]
 
         return videos, 200, {'total': len(videos)}
 
     def map_video(self, video):
         return {self.ID_KEY: video._id,
+                self.NAME_KEY: video.file_name,
                 self.DOWNLOAD_URL_KEY: video.download_url,
-                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT)}
+                self.DATETIME_KEY: video.datetime.strftime(self.DATE_FORMAT),
+                self.SIZE_KEY: video.file_size
+                }

@@ -6,10 +6,10 @@ from mongoengine.errors import ValidationError
 
 class TestVideoModel(unittest.TestCase):
     video_data = {
-        'owner': 'pepe',
         'file_name': 'file_name_test',
         'file_size': '1024',
-        'download_url': 'http//url.com'
+        'download_url': 'http//url.com',
+        'datetime': None
     }
     video_error_body = {
         'file_name': 'file_name_test',

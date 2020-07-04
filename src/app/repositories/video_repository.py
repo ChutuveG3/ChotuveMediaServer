@@ -1,6 +1,6 @@
 from pymongo import ReturnDocument
 
-from src.app.exceptions import VideoNotFoundException
+from src.app.exceptions import VideoNotFoundError
 from src.app.models import VideoModel
 
 
@@ -17,21 +17,25 @@ class VideoRepository(object):
         video._id = self._get_next_id()
         self.video_collection.insert_one(video.to_mongo())
 
-    def find_by_id(self, id_list=[], limit=0, offset=0):
+    def find_by_id(self, id_list=[], limit=0, page=0):
         '''
         :param id_list: filter by video id's.
         :param limit: limit count return values. A limit value of 0 (i.e. .limit(0)) is
         equivalent to setting no limit.
-        :param offset: skip offset videos. A offset value of 0 (i.e. .limit(0)) is
-        equivalent to setting no offset.
+        :param page: skip limit * (page - 1) videos. A page value of 0 (i.e. .limit(0)) is
+        equivalent to get the first page.
         :return: list of Videos. Raise VideoNotFoundException when result lt id´s.
         '''
         query = {'_id': {'$in': id_list}} if id_list else {}
-        result = self.video_collection.find(query, limit=limit, skip=offset)
+        result = self.video_collection.find(query, limit=limit, skip=page*limit)
         if result.count(True) < len(id_list):
-            raise VideoNotFoundException('videos not found')
+            raise VideoNotFoundError('videos not found')
 
         return [self._load(data) for data in result]
+
+    def delete(self, video):
+        query = { '_id': video._id}
+        self.video_collection.delete_one(query)
 
     def _load(self, data):
         return VideoModel(**data)
