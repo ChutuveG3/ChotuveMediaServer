@@ -14,7 +14,6 @@ from .resources.video_by_id import VideoById
 from .services import AuthService
 from .exceptions import *
 
-
 app = Flask(__name__)
 app.config["DEBUG"] = True
 API = Api(app)
@@ -65,4 +64,5 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+
     return response

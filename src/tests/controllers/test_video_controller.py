@@ -1,12 +1,9 @@
 import unittest
 
-from mock import Mock, patch
+from mock import patch
 from app import app
-
 from pymongo.errors import DuplicateKeyError
-
 from tests.clients import AppServerTestClient
-
 from src.tests.clients import WebAdminTestClient
 
 
@@ -33,13 +30,20 @@ class TestVideoController(unittest.TestCase):
         self.app.testing = True
         self.web_admin_client.testing = True
         # mock auth validations
-        self.patcher = patch('app.services.auth_service.AuthService.validate_app_server',
-                             return_value=True)
-        self.mock = self.patcher.start()
+        self.patcher_server_validate = patch(
+            'app.services.auth_service.AuthService.validate_app_server',
+            return_value=True
+        )
+        self.patcher_admin_validate = patch(
+            'app.services.auth_service.AuthService.validate_admin_token',
+            return_value=True
+        )
+        self.mock_server_validate = self.patcher_server_validate.start()
+        self.mock_admin_validate = self.patcher_admin_validate.start()
 
     def tearDown(self):
         # stop validation mock
-        self.patcher.stop()
+        patch.stopall()
 
     @patch('app.repositories.video_repository.VideoRepository.save')
     def test_success_video_upload(self, mock_save):
@@ -93,20 +97,20 @@ class TestVideoController(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-    # @patch('app.repositories.video_repository.VideoRepository.find_by_id')
-    # @patch('app.repositories.video_repository.VideoRepository.delete')
-    # def test_delete_video_success(self, mock_delete, mock_find):
-    #     # Delete video with id = 10.
-    #     response = self.web_admin_client.delete('/videos/10')
-    #
-    #     self.assertEqual(mock_delete.call_count, 1)
-    #     self.assertEqual(mock_find.call_count, 1)
-    #     self.assertEqual(response.status_code, 200)
-    #
-    # def test_delete_video_invalid_id(self):
-    #     response = self.web_admin_client.delete('/videos/not_integer')
-    #
-    #     self.assertEqual(response.status_code, 400)
+    @patch('app.repositories.video_repository.VideoRepository.find_by_id')
+    @patch('app.repositories.video_repository.VideoRepository.delete')
+    def test_delete_video_success(self, mock_delete, mock_find):
+        # Delete video with id = 10.
+        response = self.web_admin_client.delete('/videos/10')
+
+        self.assertEqual(mock_delete.call_count, 1)
+        self.assertEqual(mock_find.call_count, 1)
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_video_invalid_id(self):
+        response = self.web_admin_client.delete('/videos/not_integer')
+
+        self.assertEqual(response.status_code, 400)
 
     @patch('app.repositories.video_repository.VideoRepository.find_by_id')
     def test_get_all_videos_resp_headers(self, mock_find):
