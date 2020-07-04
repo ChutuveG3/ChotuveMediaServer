@@ -18,7 +18,7 @@ class VideoModel(Document):
         self.validate()
 
     _id = IntField()
-    file_name = StringField(validation=_not_empty, required=True)
+    file_name = StringField(validation=_not_empty, required=True, max_length=255)
     file_size = IntField(validation=_not_empty, required=True, min_value=0)
     download_url = URLField(URL_FORMAT_REGEX, validation=_not_empty, required=True)
     datetime = DateTimeField(default=datetime.datetime.utcnow)

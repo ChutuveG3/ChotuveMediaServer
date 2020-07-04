@@ -21,7 +21,7 @@ class TestVideoModel(unittest.TestCase):
 
         self.assertEqual(video.file_name, self.video_data.get('file_name'))
 
-    def test_to_default_datetime(self):
+    def test_create_video_without_datetime_should_not_none(self):
         copy = self.video_data.copy()
         copy[CreateVideoSchema.UPLOAD_DATE_KEY] = None
 
@@ -35,12 +35,26 @@ class TestVideoModel(unittest.TestCase):
         with self.assertRaises(ValidationError):
             VideoModel(**invalid_data)
 
-    def test_invalid_url_raise_validation_error(self):
+    def test_invalid_url_should_raise_validation_error(self):
         invalid_url = self.video_data.copy()
         invalid_url[CreateVideoSchema.DOWNLOAD_URL_KEY] = 'https://not_url'
 
         with self.assertRaises(ValidationError):
             VideoModel(**invalid_url)
+
+    def test_negative_file_size_should_raise_validation_error(self):
+        invalid_file_size = self.video_data.copy()
+        invalid_file_size[CreateVideoSchema.SIZE_KEY] = -10
+
+        with self.assertRaises(ValidationError):
+            VideoModel(**invalid_file_size)
+
+    def test_max_file_name_lenght_should_raise_validation_error(self):
+        invalid_file_name = self.video_data.copy()
+        invalid_file_name[CreateVideoSchema.NAME_KEY] = 'Hello' * 100
+
+        with self.assertRaises(ValidationError):
+            VideoModel(**invalid_file_name)
 
 
 if __name__ == '__main__':
