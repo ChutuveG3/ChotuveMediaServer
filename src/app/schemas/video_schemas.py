@@ -12,3 +12,15 @@ class CreateVideoSchema(Schema):
     file_size = fields.Number(attribute=SIZE_KEY, required=True)
     datetime = fields.NaiveDateTime(DATE_FORMAT, attribute=UPLOAD_DATE_KEY, allow_none=True)
     download_url = fields.String(required=True)
+
+
+class GetVideosSchema(Schema):
+    ID_KEY = 'id'
+    LIMIT_KEY = 'limit'
+    LIMIT_DEFAULT = 0
+    PAGE_KEY = 'page'
+    PAGE_DEFAULT = 0
+
+    id = fields.List(fields.Number, allow_none=True)
+    page = fields.Number(allow_none=True)
+    limit = fields.Number(allow_none=True)

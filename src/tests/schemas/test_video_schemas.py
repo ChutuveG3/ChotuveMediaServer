@@ -3,6 +3,8 @@ import unittest
 from app.schemas import CreateVideoSchema
 from marshmallow import ValidationError
 
+from src.app.schemas.video_schemas import GetVideosSchema
+
 
 class TestVideoModel(unittest.TestCase):
     create_video_data = {
@@ -37,6 +39,19 @@ class TestVideoModel(unittest.TestCase):
         video_data = video_schema.load(copy_data)
 
         self.assertIsNone(video_data.get(video_schema.UPLOAD_DATE_KEY))
+
+    def test_get_video_schema_success(self):
+        query_params = {
+            "page": 10,
+            "limit": 10,
+            "id": [1, 4, 6, 7, 8]
+        }
+        schema = GetVideosSchema()
+        video_data = schema.load(query_params)
+
+        self.assertEqual(video_data.get(schema.PAGE_KEY), 10)
+        self.assertEqual(video_data.get(schema.LIMIT_KEY), 10)
+        self.assertEqual(video_data.get(schema.ID_KEY), [1, 4, 6, 7, 8])
 
 
 if __name__ == '__main__':

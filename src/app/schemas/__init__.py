@@ -1,1 +1,1 @@
-from .video_schema import CreateVideoSchema
+from .video_schemas import *
